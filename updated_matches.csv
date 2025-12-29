@@ -1,0 +1,21 @@
+name: AI-Global-Update
+on:
+  schedule:
+    - cron: '0 0 * * *' # يعمل تلقائياً كل يوم الساعة 12 ليلاً
+  workflow_dispatch: # يسمح لك بتشغيله يدوياً الآن
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with: { python-version: '3.x' }
+      - run: pip install pandas requests
+      - run: python Bot.py
+      - name: Save
+        run: |
+          git config --global user.name 'AI-Bot'
+          git add updated_matches.csv
+          git commit -m "تحديث تلقائي للمباريات" || exit 0
+          git push
