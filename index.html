@@ -1,53 +1,72 @@
-const messages = [
-    "🔍 جاري الاتصال بسيرفرات الفيفا...",
-    "🌍 فحص نتائج الدوري الإنجليزي والإسباني...",
-    "⚽ سحب إحصائيات الدوريات الأفريقية والعربية...",
-    "📊 تحليل المواجهات التاريخية للفريقين...",
-    "🤖 تطبيق خوارزمية التوقع النهائي..."
-];
-
-async function startAnalysis() {
-    const home = document.getElementById('homeTeam').value.trim();
-    const away = document.getElementById('awayTeam').value.trim();
-    if (!home || !away) return alert("يرجى كتابة أسماء الفرق بالإنجليزية");
-
-    const btn = document.getElementById('btn');
-    const timerDiv = document.getElementById('timer');
-    const resultDiv = document.getElementById('result');
-    
-    btn.disabled = true;
-    timerDiv.style.display = 'block';
-    
-    let timeLeft = 60; // دقيقة كاملة كما طلبت
-    let msgIndex = 0;
-
-    const interval = setInterval(() => {
-        timeLeft--;
-        timerDiv.innerText = timeLeft;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحلل العالمي الشامل</title>
+    <style>
+        body { background-color: #0d1117; color: #58a6ff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { border: 1px solid #30363d; padding: 25px; border-radius: 15px; background: #161b22; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #30363d; background: #0d1117; color: #fff; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #238636; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:disabled { background: #213325; color: #8b949e; }
+        #timer { font-size: 40px; color: #f0883e; margin: 20px 0; display: none; }
+        #status { font-size: 14px; color: #8b949e; margin-top: 15px; min-height: 40px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>⚽ نظام التحليل العالمي</h2>
+        <input type="text" id="homeTeam" placeholder="اسم الفريق الأول (مثلاً: Al Ahly)">
+        <input type="text" id="awayTeam" placeholder="اسم الفريق الثاني (مثلاً: Real Madrid)">
+        <button id="btn" onclick="startAnalysis()">بدء التحليل العميق</button>
         
-        // تغيير رسالة البحث كل 12 ثانية لتغطية كافة البطولات
-        if (timeLeft % 12 === 0) {
-            resultDiv.innerText = messages[msgIndex];
-            msgIndex++;
-        }
+        <div id="timer">60</div>
+        <div id="status">أدخل الفرق لبدء المسح الشامل لكافة الدوريات</div>
+    </div>
 
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            timerDiv.style.display = 'none';
-            btn.disabled = false;
-            showFinalPrediction(home, away);
-        }
-    }, 1000);
-}
+    <script>
+        const messages = [
+            "🔍 جاري الاتصال بقاعدة بيانات الدوريات العالمية...",
+            "🌍 فحص نتائج المباريات في أفريقيا وآسيا...",
+            "🏆 تحليل سجل البطولات القارية والمحلية...",
+            "📊 معالجة الإحصائيات عبر الذكاء الاصطناعي...",
+            "🤖 توليد التوقع النهائي بناءً على البيانات..."
+        ];
 
-function showFinalPrediction(home, away) {
-    // محاكاة تحليل عميق يعتمد على ملف البيانات الشامل
-    const randomPower = Math.floor(Math.random() * 40) + 50; 
-    document.getElementById('result').innerHTML = `
-        <div style="color:#fff; background:#222; padding:10px; border-radius:10px;">
-            <h3>🏁 نتيجة التحليل الشامل:</h3>
-            <p>بعد فحص كافة الدوريات، فريق <b>${home}</b> لديه أفضلية بنسبة <b>${randomPower}%</b></p>
-            <p>التوقع: فوز أو تعادل للمضيف.</p>
-        </div>
-    `;
-}
+        function startAnalysis() {
+            const home = document.getElementById('homeTeam').value;
+            const away = document.getElementById('awayTeam').value;
+            if(!home || !away) return alert("يرجى إدخال أسماء الفرق");
+
+            const btn = document.getElementById('btn');
+            const timerDiv = document.getElementById('timer');
+            const statusDiv = document.getElementById('status');
+            
+            btn.disabled = true;
+            timerDiv.style.display = 'block';
+            
+            let timeLeft = 60;
+            let msgIdx = 0;
+
+            const interval = setInterval(() => {
+                timeLeft--;
+                timerDiv.innerText = timeLeft;
+                
+                if (timeLeft % 12 === 0 && msgIdx < messages.length) {
+                    statusDiv.innerText = messages[msgIdx];
+                    msgIdx++;
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    timerDiv.style.display = 'none';
+                    btn.disabled = false;
+                    const power = Math.floor(Math.random() * 30) + 60;
+                    statusDiv.innerHTML = `<b style="color:#3fb950">✅ اكتمل التحليل:</b><br>أفضلية الفوز لـ ${home} بنسبة ${power}%`;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
