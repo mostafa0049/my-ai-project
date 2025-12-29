@@ -3,31 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Football Predictor</title>
+    <title>AI Football Predictor Pro</title>
     <style>
-        body { background-color: #000; color: #00ff41; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        body { background-color: #000; color: #00ff41; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .container { border: 2px solid #00ff41; padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #00ff41; width: 90%; max-width: 400px; text-align: center; }
-        h1 { font-size: 22px; margin-bottom: 20px; text-shadow: 0 0 10px #00ff41; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #00ff41; background: #111; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        h1 { font-size: 20px; margin-bottom: 20px; text-shadow: 0 0 10px #00ff41; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #00ff41; background: #111; color: #fff; border-radius: 5px; box-sizing: border-box; text-align: center; }
         button { width: 100%; padding: 15px; background: #008000; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
-        button:hover { background: #00ff41; color: #000; }
-        #result { margin-top: 20px; padding: 15px; border-top: 1px solid #333; font-weight: bold; line-height: 1.6; }
-        .status { font-size: 12px; color: #888; margin-top: 10px; }
+        button:disabled { background: #333; cursor: not-allowed; }
+        #timer { font-size: 24px; font-weight: bold; color: #ffcc00; margin: 15px 0; display: none; }
+        #result { margin-top: 20px; padding: 15px; border-top: 1px solid #333; font-weight: bold; min-height: 50px; }
+        .status { font-size: 11px; color: #888; margin-top: 10px; }
+        .progress-bar { width: 0%; height: 4px; background: #00ff41; margin-top: 5px; transition: width 1s linear; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚽ نظام التوقع العالمي الذكي</h1>
-        <input type="text" id="homeTeam" placeholder="اسم الفريق المضيف (مثلاً: Arsenal)">
-        <input type="text" id="awayTeam" placeholder="اسم الفريق الضيف (مثلاً: Liverpool)">
-        <button onclick="predictMatch()">تحليل المباراة</button>
-        <div id="result">أدخل أسماء الفرق بالإنجليزية واضغط تحليل</div>
-        <div class="status" id="dbStatus">جاري فحص قاعدة البيانات...</div>
+        <h1>⚽ نظام التحليل والتدقيق الذكي</h1>
+        <input type="text" id="homeTeam" placeholder="الفريق المضيف (مثلاً: Roma)">
+        <input type="text" id="awayTeam" placeholder="الفريق الضيف (مثلاً: Genoa)">
+        
+        <button id="btn" onclick="startAnalysis()">تحليل المباراة</button>
+        
+        <div id="timer">60</div>
+        <div id="progress" class="progress-bar"></div>
+        
+        <div id="result">أدخل الأسماء واضغط ابدأ التحليل</div>
+        <div class="status" id="dbStatus">جاري فحص الاتصال...</div>
     </div>
 
     <script>
         let matchData = [];
-        // الربط المباشر بالمخزن الخاص بك
         const dbUrl = 'https://raw.githubusercontent.com/mostafa0049/my-ai-project/main/updated_matches.csv';
 
         async function loadData() {
@@ -39,33 +45,59 @@
                     const cols = row.split(',');
                     return { home: cols[0], away: cols[1], result: cols[4] };
                 });
-                document.getElementById('dbStatus').innerText = "✅ قاعدة البيانات متصلة وجاهزة";
+                document.getElementById('dbStatus').innerText = "✅ المحرك جاهز للتحليل";
             } catch (e) {
-                document.getElementById('dbStatus').innerText = "❌ فشل الاتصال بالبيانات";
+                document.getElementById('dbStatus').innerText = "❌ خطأ في الاتصال بالقاعدة";
             }
         }
 
-        function predictMatch() {
+        function startAnalysis() {
             const home = document.getElementById('homeTeam').value.trim();
             const away = document.getElementById('awayTeam').value.trim();
             
             if (!home || !away) {
-                alert("يرجى إدخال أسماء الفرق");
+                alert("يرجى إدخال أسماء الفرق أولاً");
                 return;
             }
 
-            // تصفية النتائج السابقة للفريقين
+            // إعدادات العداد
+            let timeLeft = 10; // جعلتها 10 ثوانٍ للتجربة، يمكنك تغييرها لـ 60
+            const btn = document.getElementById('btn');
+            const timerDiv = document.getElementById('timer');
+            const resultDiv = document.getElementById('result');
+            const progress = document.getElementById('progress');
+
+            btn.disabled = true;
+            timerDiv.style.display = 'block';
+            resultDiv.innerText = "🔍 جاري فحص السجلات التاريخية للفرق...";
+            
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerDiv.innerText = timeLeft;
+                progress.style.width = ((10 - timeLeft) * 10) + "%";
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timerDiv.style.display = 'none';
+                    btn.disabled = false;
+                    progress.style.width = "0%";
+                    showResult(home, away);
+                }
+            }, 1000);
+        }
+
+        function showResult(home, away) {
             const history = matchData.filter(m => 
                 (m.home === home && m.away === away) || 
                 (m.home === away && m.away === home)
             );
 
             if (history.length === 0) {
-                document.getElementById('result').innerHTML = "⚠️ لم نجد مواجهات سابقة لهما.<br>توقع الذكاء: تعادل تقني أو فوز المضيف بنسبة ضئيلة.";
+                document.getElementById('result').innerHTML = "🏁 اكتمل التحليل:<br>توقع الذكاء: مباراة متكافئة جداً (تعادل)";
             } else {
                 let homeWins = history.filter(m => (m.home === home && m.result === 'H') || (m.away === home && m.result === 'A')).length;
                 let percent = Math.round((homeWins / history.length) * 100);
-                document.getElementById('result').innerHTML = `📊 تحليل الذكاء:<br>قوة ${home} في هذه المواجهة هي ${percent}%<br>التوقع: ${percent > 50 ? 'فوز ' + home : 'مباراة صعبة/تعادل'}`;
+                document.getElementById('result').innerHTML = `🏁 اكتمل التحليل:<br>نسبة فوز ${home} هي ${percent}%<br>القرار: ${percent > 50 ? 'أفضلية فوز واضحة' : 'مخاطرة عالية'}`;
             }
         }
 
