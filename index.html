@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Global Predictor</title>
+    <style>
+        body { background: #121212; color: #00ff41; text-align: center; font-family: monospace; padding: 20px; }
+        .container { border: 1px solid #00ff41; padding: 20px; border-radius: 10px; display: inline-block; background: #000; }
+        input { background: #000; border: 1px solid #00ff41; color: #00ff41; padding: 10px; margin: 10px; width: 80%; }
+        button { background: #00ff41; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 85%; }
+        #status { font-size: 0.8em; color: #888; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>نظام التوقع العالمي الذكي ⚽</h2>
+        <input type="text" id="home" placeholder="الفريق المضيف">
+        <input type="text" id="away" placeholder="الفريق الضيف">
+        <br>
+        <button onclick="analyze()">تحليل المباراة</button>
+        <h3 id="result"></h3>
+        <div id="status">جاري الاتصال بقاعدة البيانات العالمية...</div>
+    </div>
+    <script>
+        // هذا الكود سيتصل بملف البيانات الذي سيحدثه الروبوت
+        function analyze() {
+            document.getElementById('result').innerText = "جاري سحب بيانات الروبوت الحالية...";
+            // سيتم تفعيل الربط الكامل بعد تحديث الروبوت الأول
+        }
+    </script>
+</body>
+</html>
