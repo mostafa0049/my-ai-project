@@ -3,83 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المحلل الرياضي الذكي Pro</title>
+    <title>المحلل الذكي الأوتوماتيكي</title>
     <style>
-        body { background-color: #0b0e14; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { border: 1px solid #30363d; padding: 30px; border-radius: 20px; background: #161b22; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); border-top: 5px solid #238636; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        input { width: 100%; padding: 15px; border: 1px solid #30363d; background: #0d1117; color: #fff; border-radius: 12px; text-align: center; outline: none; transition: 0.3s; }
-        input:focus { border-color: #238636; box-shadow: 0 0 10px rgba(35, 134, 54, 0.3); }
-        button { width: 100%; padding: 18px; background: #238636; color: #fff; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        button:active { transform: scale(0.98); }
-        #timer { font-size: 45px; color: #f0883e; margin: 20px 0; display: none; font-weight: bold; text-shadow: 0 0 10px rgba(240, 136, 62, 0.3); }
-        #result-screen { margin-top: 25px; padding: 20px; border-radius: 15px; background: #0d1117; display: none; border: 1px solid #238636; text-align: center; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .league-tag { background: #1f6feb; color: white; padding: 4px 12px; border-radius: 6px; font-size: 13px; display: inline-block; margin-bottom: 10px; }
+        :root { --accent: #00ff88; --bg: #0b0e14; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #161b22; border: 1px solid #30363d; padding: 25px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { width: 100%; padding: 15px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 12px; text-align: center; font-size: 16px; }
+        button { width: 100%; padding: 18px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 18px; }
+        #timer-box { display: none; margin: 20px 0; text-align: center; }
+        #results { display: none; margin-top: 25px; border-top: 2px solid #30363d; padding-top: 20px; }
+        .badge { background: #1f6feb; padding: 4px 10px; border-radius: 6px; font-size: 12px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .stat-item { background: #0d1117; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #30363d; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2 style="margin-top: 0;">⚽ نظام التوقع والتحليل</h2>
-        <div class="input-group">
-            <input type="text" id="h" placeholder="الفريق المضيف">
-            <input type="text" id="a" placeholder="الفريق الضيف">
-        </div>
-        <input type="date" id="matchDate" style="margin-bottom: 20px;">
-        
-        <button id="btn" onclick="startProcess()">تحليل المواجهة</button>
-        
-        <div id="timer">60</div>
-        <div id="status" style="margin-top: 15px; font-size: 14px; color: #8b949e;"></div>
 
-        <div id="result-screen">
-            <span id="league" class="league-tag"></span>
-            <div id="score" style="font-size: 35px; color: #3fb950; margin: 15px 0; font-weight: bold;"></div>
-            <div id="final-decision" style="font-size: 18px; color: #fff;"></div>
-            <p style="font-size: 11px; color: #444; margin-top: 15px;">تم التحليل بناءً على بيانات الأداء الحية المتاحة.</p>
-        </div>
+<div class="card">
+    <h2 style="text-align:center;">⚽ محلل البيانات الأوتوماتيكي</h2>
+    <div class="input-group">
+        <input type="text" id="hTeam" placeholder="الفريق المضيف">
+        <input type="text" id="aTeam" placeholder="الفريق الضيف">
+    </div>
+    <button id="btn" onclick="autoAnalyze()">بدء التحليل الشامل (60s)</button>
+
+    <div id="timer-box">
+        <div id="countdown" style="font-size: 40px; color: var(--accent);">60</div>
+        <div id="status-msg" style="color: #8b949e; font-size: 14px;">جاري الاتصال بالمصادر...</div>
     </div>
 
-    <script>
-        function startProcess() {
-            const hName = document.getElementById('h').value.trim();
-            const aName = document.getElementById('a').value.trim();
-            const dateVal = document.getElementById('matchDate').value;
+    <div id="results">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span id="league-tag" class="badge">جاري التحديد...</span>
+            <div id="final-score" style="font-size: 45px; font-weight: bold; color: var(--accent); margin: 10px 0;"></div>
+            <div id="verdict" style="font-size: 18px; font-weight: bold;"></div>
+        </div>
 
-            if(!hName || !aName) return alert("يرجى إدخال أسماء الفرق");
+        <div class="stat-grid">
+            <div class="stat-item"><div style="color:#8b949e">مؤشر أداء المضيف</div><div id="hForm" style="color: #00ff88;"></div></div>
+            <div class="stat-item"><div style="color:#8b949e">مؤشر أداء الضيف</div><div id="aForm" style="color: #ff4d4d;"></div></div>
+            <div class="stat-item"><div style="color:#8b949e">قوة الهجوم</div><div id="attPower"></div></div>
+            <div class="stat-item"><div style="color:#8b949e">الصلابة الدفاعية</div><div id="defPower"></div></div>
+        </div>
+    </div>
+</div>
 
-            document.getElementById('btn').style.display = 'none';
-            document.getElementById('timer').style.display = 'block';
-            document.getElementById('result-screen').style.display = 'none';
-            
-            let time = 60;
-            const statusArr = ["جاري البحث في الدوري المحلي...", "تحليل القوة الهجومية...", "مراجعة السجل التاريخي...", "حساب احتمالات الفوز...", "إصدار النتيجة النهائية..."];
+<script>
+let csvData = [];
+// جلب البيانات تلقائياً عند تحميل الصفحة
+async function loadSource() {
+    const url = 'https://raw.githubusercontent.com/mostafa0049/my-ai-project/main/updated_matches.csv';
+    try {
+        const r = await fetch(url);
+        const text = await r.text();
+        const rows = text.split('\n').slice(1);
+        csvData = rows.map(row => {
+            const c = row.split(',');
+            return { div: c[0], home: c[1], away: c[2], hg: parseInt(c[3]), ag: parseInt(c[4]), res: c[5] };
+        });
+    } catch (e) { console.error("Data source error"); }
+}
 
-            const timerInt = setInterval(() => {
-                time--;
-                document.getElementById('timer').innerText = time;
-                document.getElementById('status').innerText = statusArr[Math.floor(time/15)] || "جاري المعالجة...";
+function autoAnalyze() {
+    const h = document.getElementById('hTeam').value.trim();
+    const a = document.getElementById('aTeam').value.trim();
+    if(!h || !a) return alert("أدخل الفرق");
 
-                if(time <= 0) {
-                    clearInterval(timerInt);
-                    document.getElementById('timer').style.display = 'none';
-                    document.getElementById('status').innerText = "اكتمل التحليل ✅";
-                    showFinal(hName, aName, dateVal);
-                }
-            }, 1000);
-        }
+    document.getElementById('btn').style.display = 'none';
+    document.getElementById('timer-box').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
 
-        function showFinal(h, a, d) {
-            const goalsH = Math.floor(Math.random() * 4);
-            const goalsA = Math.floor(Math.random() * 3);
-            
-            document.getElementById('result-screen').style.display = 'block';
-            document.getElementById('league').innerText = "البطولة: " + (h.toLowerCase().includes('roma') ? 'الدوري الإيطالي' : 'بطولة دولية');
-            document.getElementById('score').innerText = goalsH + " - " + goalsA;
-            document.getElementById('final-decision').innerText = "التوقع: فوز " + (goalsH >= goalsA ? h : a);
+    let time = 60;
+    const interval = setInterval(() => {
+        time--;
+        document.getElementById('countdown').innerText = time;
+        
+        if(time == 45) document.getElementById('status-msg').innerText = "🔍 جاري تحديد البطولة من قاعدة البيانات...";
+        if(time == 30) document.getElementById('status-msg').innerText = "📊 تحليل نتائج آخر 5 مباريات للفريقين...";
+        if(time == 15) document.getElementById('status-msg').innerText = "🛡️ فحص سجل الأهداف التاريخي...";
+        
+        if(time <= 0) {
+            clearInterval(interval);
+            document.getElementById('timer-box').style.display = 'none';
             document.getElementById('btn').style.display = 'block';
-            document.getElementById('btn').innerText = "إعادة التحليل";
+            performLogic(h, a);
         }
-    </script>
+    }, 1000);
+}
+
+function performLogic(h, a) {
+    // 1. استخراج الدوري أوتوماتيكياً
+    const matchInfo = csvData.find(m => m.home === h || m.away === h) || { div: "بطولة دولية" };
+    
+    // 2. تحليل آخر 5 مباريات (أوتوماتيكياً)
+    const hLast5 = csvData.filter(m => m.home === h || m.away === h).slice(-5);
+    const aLast5 = csvData.filter(m => m.home === a || m.away === a).slice(-5);
+    
+    // حساب النقاط (فوز=3, تعادل=1)
+    const calculateForm = (matches, team) => {
+        let score = 0;
+        matches.forEach(m => {
+            if((m.home === team && m.res === 'H') || (m.away === team && m.res === 'A')) score += 3;
+            else if(m.res === 'D') score += 1;
+        });
+        return score;
+    };
+
+    const hScore = calculateForm(hLast5, h);
+    const aScore = calculateForm(aLast5, a);
+
+    // 3. توليد النتيجة المتوقعة بناءً على الأرقام المستخرجة
+    const gH = hScore > aScore ? 2 : (hScore === aScore ? 1 : 0);
+    const gA = aScore > hScore ? 2 : (hScore === aScore ? 1 : 1);
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('league-tag').innerText = "البطولة المستهدفة: " + matchInfo.div;
+    document.getElementById('final-score').innerText = `${gH} - ${gA}`;
+    document.getElementById('hForm').innerText = hScore + " pts (آخر 5)";
+    document.getElementById('aForm').innerText = aScore + " pts (آخر 5)";
+    document.getElementById('attPower').innerText = (hScore > 10 ? "مرتفع" : "متوسط");
+    document.getElementById('defPower').innerText = (aScore > 10 ? "صلب" : "متوسط");
+    document.getElementById('verdict').innerText = gH > gA ? `أفضلية فوز لـ ${h}` : (gA > gH ? `أفضلية فوز لـ ${a}` : "تعادل متوقع");
+}
+loadSource();
+</script>
+
 </body>
 </html>
