@@ -1,43 +1,48 @@
 import pandas as pd
+import requests
 
-def update_mega_database():
-    # روابط لمصادر بيانات عالمية ضخمة تغطي معظم دوريات العالم
-    urls = [
-        "https://www.football-data.co.uk/mmz4281/2425/E0.csv", # إنجلترا
-        "https://www.football-data.co.uk/mmz4281/2425/SP1.csv", # إسبانيا
-        "https://www.football-data.co.uk/mmz4281/2425/I1.csv",  # إيطاليا
-        "https://www.football-data.co.uk/mmz4281/2425/D1.csv",  # ألمانيا
-        "https://raw.githubusercontent.com/jokecamp/FootballData/master/nfl/nfl_2023.csv", # مثال لبيانات إضافية
-        "https://www.football-data.co.uk/mmz4281/2425/F1.csv"   # فرنسا
-    ]
-    
-    all_frames = []
-    print("🌐 جاري اجتياح قواعد البيانات العالمية...")
+def update_global_database():
+    # روابط قواعد البيانات العالمية (تغطي الدوريات الكبرى، الدرجة الثانية، والبطولات الأوروبية)
+    # ملاحظة: هذه المصادر يتم تحديثها يومياً بالنتائج الفعلية
+    leagues = {
+        "E0": "الدوري الإنجليزي الممتاز",
+        "E1": "دوري الدرجة الأولى الإنجليزي",
+        "SP1": "الدوري الإسباني",
+        "I1": "الدوري الإيطالي",
+        "D1": "الدوري الألماني",
+        "F1": "الدوري الفرنسي",
+        "B1": "الدوري البلجيكي",
+        "N1": "الدوري الهولندي",
+        "P1": "الدوري البرتغالي",
+        "T1": "الدوري التركي"
+    }
 
-    for url in urls:
+    base_url = "https://www.football-data.co.uk/mmz4281/2425/" # موسم 24/25
+    all_data = []
+
+    print("🚀 جاري اجتياح قواعد البيانات الرياضية العالمية...")
+
+    for code, name in leagues.items():
         try:
+            url = f"{base_url}{code}.csv"
             df = pd.read_csv(url)
-            # توحيد الأعمدة لتناسب الواجهة: الدوري، المضيف، الضيف، أهداف هـ، أهداف ض، النتيجة، التاريخ
-            # سنقوم بمحاولة ذكية لاستخراج الدوري من الرابط نفسه
-            league_name = url.split('/')[-1].split('.')[0]
-            
-            temp_df = pd.DataFrame()
-            temp_df['Div'] = [league_name] * len(df)
-            temp_df['Home'] = df['HomeTeam']
-            temp_df['Away'] = df['AwayTeam']
-            temp_df['HG'] = df['FTHG']
-            temp_df['AG'] = df['FTAG']
-            temp_df['Res'] = df['FTR']
-            temp_df['Date'] = df['Date']
-            
-            all_frames.append(temp_df)
+            # اختيار الأعمدة الضرورية فقط للتحليل
+            df = df[['Date', 'HomeTeam', 'AwayTeam', 'FTHG', 'FTAG', 'FTR']]
+            df['League'] = name
+            all_data.append(df)
+            print(f"✅ تم جلب بيانات: {name}")
         except Exception as e:
-            print(f"⚠️ تخطي مصدر بسبب: {e}")
+            print(f"❌ تعذر جلب {name}: {e}")
 
-    if all_frames:
-        final_db = pd.concat(all_frames, ignore_index=True)
+    if all_data:
+        # دمج كل الدوريات في ملف واحد ضخم
+        final_db = pd.concat(all_data, ignore_index=True)
+        # تنظيف البيانات (إزالة الفراغات)
+        final_db.columns = ['Date', 'Home', 'Away', 'HG', 'AG', 'Res', 'League']
         final_db.to_csv('updated_matches.csv', index=False)
-        print(f"✅ تم تحديث النظام بـ {len(final_db)} مباراة من مختلف القارات!")
+        print(f"📊 اكتمل التحديث! إجمالي المباريات المسجلة: {len(final_db)}")
+    else:
+        print("⚠️ لم يتم جلب أي بيانات جديدة.")
 
 if __name__ == "__main__":
-    update_mega_database()
+    update_global_database()
