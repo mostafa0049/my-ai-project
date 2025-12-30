@@ -3,124 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محلل الأداء الفعلي 2025-2026</title>
+    <title>المحلل الإحصائي 2025-2026</title>
     <style>
-        :root { --primary: #00ff88; --bg: #0d1117; --card: #161b22; }
+        :root { --primary: #00ff88; --bg: #0d1117; }
         body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: var(--card); border: 1px solid #30363d; padding: 30px; border-radius: 20px; width: 95%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        input { width: 100%; padding: 15px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 12px; text-align: center; font-size: 16px; outline: none; }
-        input:focus { border-color: var(--primary); }
-        button { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
-        #loading-box { display: none; text-align: center; margin: 20px 0; }
-        .timer { font-size: 45px; color: var(--primary); font-weight: bold; }
-        #report { display: none; margin-top: 25px; padding: 20px; border-radius: 15px; background: #0d1117; border-top: 4px solid var(--primary); }
-        .stat-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 14px; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
-        .actual-score { font-size: 50px; font-weight: bold; color: var(--primary); text-align: center; margin: 15px 0; }
+        .container { background: #161b22; border: 1px solid #30363d; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #8b949e; }
+        input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 17px; }
+        #loader { display: none; text-align: center; margin-top: 20px; }
+        .timer { font-size: 40px; color: var(--primary); font-weight: bold; }
+        #result { display: none; margin-top: 25px; border-top: 2px solid #30363d; padding-top: 20px; text-align: center; }
+        .score { font-size: 48px; font-weight: bold; color: var(--primary); margin: 10px 0; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2 style="text-align: center; margin-bottom: 25px;">📊 محلل موسم 2025-2026</h2>
+<div class="container">
+    <h2 style="text-align: center;">🏁 محلل المباريات الشامل</h2>
     
     <div class="input-group">
-        <input type="text" id="homeT" placeholder="المضيف (مثلاً: Liverpool)">
-        <input type="text" id="awayT" placeholder="الضيف (مثلاً: Arsenal)">
-    </div>
-    <input type="date" id="matchD" style="width: 100%; box-sizing: border-box; margin-bottom: 20px;">
-
-    <button id="runBtn" onclick="startAnalysis()">تحليل الأداء الفعلي (60 ثانية)</button>
-
-    <div id="loading-box">
-        <div class="timer" id="count">60</div>
-        <p id="status" style="color: #8b949e;">جاري سحب إحصائيات موسم 2025 المباشرة...</p>
-    </div>
-
-    <div id="report">
-        <div style="text-align: center; font-size: 12px; color: var(--primary);" id="leagueName"></div>
-        <div class="actual-score" id="finalScore">0 - 0</div>
-        <div id="verdict" style="text-align: center; font-weight: bold; margin-bottom: 20px;"></div>
+        <label>اسم الفريق المضيف (مثلاً: Roma)</label>
+        <input type="text" id="homeTeam" placeholder="أدخل اسم الفريق الأول">
         
-        <div class="stat-row"><span>كفاءة الهجوم (المضيف)</span><span id="hAtt">0%</span></div>
-        <div class="stat-row"><span>كفاءة الهجوم (الضيف)</span><span id="aAtt">0%</span></div>
-        <div class="stat-row"><span>نقاط الشكل (آخر 5 مباريات)</span><span id="formPts">0 vs 0</span></div>
+        <label>اسم الفريق الضيف (مثلاً: Genoa)</label>
+        <input type="text" id="awayTeam" placeholder="أدخل اسم الفريق الثاني">
+        
+        <label>تاريخ المواجهة</label>
+        <input type="date" id="matchDate">
+    </div>
+
+    <button id="analyzeBtn" onclick="process()">بدء التحليل الفني</button>
+
+    <div id="loader">
+        <div class="timer" id="seconds">60</div>
+        <p>جاري سحب بيانات موسم 2025-2026...</p>
+    </div>
+
+    <div id="result">
+        <div id="leagueTag" style="color: var(--primary); font-size: 12px; font-weight: bold;"></div>
+        <div class="score" id="finalScore">0 - 0</div>
+        <div id="prediction" style="font-size: 18px; margin-bottom: 10px;"></div>
+        <div style="font-size: 13px; color: #8b949e;" id="details"></div>
     </div>
 </div>
 
 <script>
 let database = [];
 
-// تحميل البيانات فور فتح الصفحة
-async function loadDB() {
-    const url = 'https://raw.githubusercontent.com/mostafa0049/my-ai-project/main/updated_matches.csv';
+// مزامنة البيانات من ملف CSV الخاص بك
+async function syncData() {
+    const csvUrl = 'https://raw.githubusercontent.com/mostafa0049/my-ai-project/main/updated_matches.csv';
     try {
-        const r = await fetch(url);
-        const t = await r.text();
-        const rows = t.split('\n').slice(1);
-        database = rows.map(row => {
-            const c = row.split(',');
-            return { date: c[0], home: c[1], away: c[2], hg: parseInt(c[3]), ag: parseInt(c[4]), res: c[5], league: c[6] };
+        const response = await fetch(csvUrl);
+        const text = await response.text();
+        const rows = text.split('\n').slice(1);
+        database = rows.map(r => {
+            const c = r.split(',');
+            return { date: c[0], home: c[1], away: c[2], hg: c[3], ag: c[4], res: c[5], league: c[6] };
         });
-    } catch (e) { console.error("Database Load Error"); }
+    } catch (e) { console.log("خطأ في الاتصال بقاعدة البيانات"); }
 }
 
-function startAnalysis() {
-    const h = document.getElementById('homeT').value.trim();
-    const a = document.getElementById('awayT').value.trim();
-    if(!h || !a) return alert("أدخل أسماء الفرق بالإنجليزية");
+function process() {
+    const h = document.getElementById('homeTeam').value;
+    const a = document.getElementById('awayTeam').value;
+    const d = document.getElementById('matchDate').value;
 
-    document.getElementById('runBtn').style.display = 'none';
-    document.getElementById('loading-box').style.display = 'block';
-    document.getElementById('report').style.display = 'none';
+    if(!h || !a || !d) return alert("يرجى إدخال أسماء الفرق والتاريخ");
 
-    let time = 60;
+    document.getElementById('analyzeBtn').style.display = 'none';
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+
+    let count = 60;
     const interval = setInterval(() => {
-        time--;
-        document.getElementById('count').innerText = time;
-        if(time == 30) document.getElementById('status').innerText = "حساب متوسط الأهداف لموسم 2025-2026...";
-        if(time <= 0) {
+        count--;
+        document.getElementById('seconds').innerText = count;
+        if(count <= 0) {
             clearInterval(interval);
-            document.getElementById('loading-box').style.display = 'none';
-            document.getElementById('runBtn').style.display = 'block';
-            runLogic(h, a);
+            calculateResult(h, a);
         }
     }, 1000);
 }
 
-function runLogic(h, a) {
-    // فلترة بيانات الموسم الحالي للفريقين
-    const hMatches = database.filter(m => m.home === h || m.away === h).slice(-5);
-    const aMatches = database.filter(m => m.home === a || m.away === a).slice(-5);
+function calculateResult(h, a) {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('analyzeBtn').style.display = 'block';
+    document.getElementById('result').style.display = 'block';
 
-    const getStats = (matches, team) => {
-        let goals = 0, pts = 0;
-        matches.forEach(m => {
-            const isHome = m.home === team;
-            goals += isHome ? m.hg : m.ag;
-            if((isHome && m.res === 'H') || (!isHome && m.res === 'A')) pts += 3;
-            else if(m.res === 'D') pts += 1;
-        });
-        return { avg: goals / (matches.length || 1), pts: pts };
+    // فلترة آخر 5 مباريات للفريقين من الموسم الحالي
+    const hData = database.filter(m => m.home === h || m.away === h).slice(-5);
+    const aData = database.filter(m => m.home === a || m.away === a).slice(-5);
+
+    // حساب متوسط الأهداف (هجوم ودفاع)
+    const getGoals = (data, team) => {
+        let total = 0;
+        data.forEach(m => total += (m.home === team ? parseInt(m.hg) : parseInt(m.ag)));
+        return (total / (data.length || 1)).toFixed(1);
     };
 
-    const hStat = getStats(hMatches, h);
-    const aStat = getStats(aMatches, a);
+    const avgH = getGoals(hData, h);
+    const avgA = getGoals(aData, a);
 
-    // حساب النتيجة المتوقعة بناءً على المتوسط الفعلي
-    const finalH = Math.round(hStat.avg);
-    const finalA = Math.round(aStat.avg);
+    const scoreH = Math.round(avgH);
+    const scoreA = Math.round(avgA);
 
-    document.getElementById('report').style.display = 'block';
-    document.getElementById('finalScore').innerText = `${finalH} - ${finalA}`;
-    document.getElementById('leagueName').innerText = hMatches.length > 0 ? hMatches[0].league : "موسم 2025-2026";
-    document.getElementById('hAtt').innerText = (hStat.avg * 40).toFixed(0) + "%";
-    document.getElementById('aAtt').innerText = (aStat.avg * 40).toFixed(0) + "%";
-    document.getElementById('formPts').innerText = `${hStat.pts} vs ${aStat.pts} (من 15)`;
-    document.getElementById('verdict').innerText = finalH > finalA ? `الأفضلية الفنية: فوز ${h}` : (finalA > finalH ? `الأفضلية الفنية: فوز ${a}` : "تعادل منطقي");
+    document.getElementById('finalScore').innerText = `${scoreH} - ${scoreA}`;
+    document.getElementById('leagueTag').innerText = hData.length > 0 ? "البطولة: " + hData[0].league : "موسم 2025-2026";
+    document.getElementById('prediction').innerText = scoreH > scoreA ? `أفضلية فوز لـ ${h}` : (scoreA > scoreH ? `أفضلية فوز لـ ${a}` : "تعادل فني متوقع");
+    document.getElementById('details').innerText = `بناءً على متوسط ${avgH} أهداف للمضيف و ${avgA} أهداف للضيف.`;
 }
 
-loadDB();
+syncData();
 </script>
 </body>
 </html>
